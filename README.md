@@ -7,4 +7,4 @@
 * As an unauthenticated user, when I login I should not have to search again.
 
 ### Heroku app at
-[js-nightlife.herokuapp.com](js-nightlife.herokuapp.com)
+[js-nightlife.herokuapp.com](https://js-nightlife.herokuapp.com)
