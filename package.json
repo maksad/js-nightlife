@@ -33,6 +33,7 @@
     "mongoose": "^4.1.0",
     "passport": "^0.3.0",
     "passport-twitter": "^1.0.4",
-    "pug": "^2.0.0-rc.2"
+    "pug": "^2.0.0-rc.2",
+    "yelp-fusion": "^1.0.3"
   }
 }

@@ -1,0 +1,10 @@
+ul.collection
+  li.collection-item.avatar
+    img.circle(src=business.image_url, alt=business.name)
+    span.title= business.name
+    p= business.display_phone
+      br
+      span.ratings stars: #{business.rating}
+      span.price price: #{business.price}
+    a.secondary-content(href="#!")
+      i.material-icons star_border

@@ -1,8 +1,10 @@
 'use strict';
 
 const path = process.cwd();
-
+const SearchHandler = require(path + '/app/controllers/searchHandler.server.js');
 module.exports = function (app, passport) {
+
+  const searchHandler = new SearchHandler();
 
   function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
@@ -38,9 +40,7 @@ module.exports = function (app, passport) {
     }));
 
   app.route('/')
-    .get((req, res) => {
-      res.render('home')
-    });
+    .get(searchHandler.getNightLife);
 
   app.route('/profile')
     .get(isLoggedIn, function (req, res) {

@@ -1,4 +1,14 @@
 extends layout.pug
 
 block content
-  hi there
+  include _home_styles.pug
+
+  each business in JSON.parse(data)
+    include _list_bars.pug
+
+  .row
+    p The app uses
+      a(
+        href='https://www.yelp.com/developers/documentation/v3'
+        target='_blank'
+      )= ' YELP api.'
