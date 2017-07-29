@@ -3,6 +3,15 @@ extends layout.pug
 block content
   include _home_styles.pug
 
+  include _search_form.pug
+
+  if error
+    .row
+      .col.s12
+        .card.red.lighten-5.col.s12.remove-shadow
+          .card-content.col.s12
+            p= error
+
   each business in JSON.parse(data)
     include _list_bars.pug
 

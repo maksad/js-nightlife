@@ -4,6 +4,8 @@ const yelp = require('yelp-fusion');
 
 function SearchHandler() {
   this.getNightLife = (req, res) => {
+    const location = req.query.search ? req.query.search : '';
+
     return yelp
       .accessToken(
         process.env.YELP_CLIENT_ID,
@@ -14,12 +16,20 @@ function SearchHandler() {
 
           client.search({
             term:'bars',
-            location: 'helsinki'
+            location: location
           }).then(response => {
             return res.render('home',
               {
-                data: JSON.stringify(response.jsonBody.businesses),
-                total: JSON.stringify(response.jsonBody.total),
+                data: JSON.stringify(response.jsonBody.businesses)
+              }
+            );
+          })
+          .catch(e => {
+            const errorMessage = 'We couldn\'t find anything in the location "' + location + '."';
+            return res.render('home',
+              {
+                error: location ? errorMessage : null,
+                data: JSON.stringify([]),
               }
             );
           });

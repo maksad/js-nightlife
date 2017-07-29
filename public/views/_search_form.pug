@@ -1,0 +1,31 @@
+style(type='text/css').
+  .search-field {
+    position: relative;
+  }
+
+  #search-button {
+    width: 68px;
+    height: 35px;
+    position: absolute;
+    display: block;
+    right: 10px;
+    top: 19px;
+    border-radius: 0px;
+    box-shadow: none;
+  }
+
+  #search-button .material-icons {
+    line-height: 10px;
+  }
+
+form.col.s12(action='/', method='GET')
+  .row.search-field
+    .input-field.col.s12
+      input(type='text', name='search')
+      label(
+        for='searchString',
+        data-success='right'
+      ) Where are you right now?
+
+    button#search-button.btn-floating.btn-large.waves-effect.waves-light(type='submit')
+      i.material-icons search
