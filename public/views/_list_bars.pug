@@ -1,10 +1,11 @@
 ul.collection
-  li.collection-item.avatar
+  li.collection-item.avatar(id=business.id)
     img.circle(src=business.image_url, alt=business.name)
     span.title= business.name
     p= business.display_phone
       br
       span.ratings stars: #{business.rating}
       span.price price: #{business.price}
-    a.secondary-content(href="#!")
+    a.secondary-content(href=business.id)
       i.material-icons star_border
+      span.number-of-visitors

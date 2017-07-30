@@ -12,6 +12,8 @@ block content
           .card-content.col.s12
             p= error
 
+  available-bars(bars=bars, current-user=userId)
+
   each business in JSON.parse(data)
     include _list_bars.pug
 
@@ -21,3 +23,30 @@ block content
         href='https://www.yelp.com/developers/documentation/v3'
         target='_blank'
       )= ' YELP api.'
+
+  script.
+    var collections = document.querySelectorAll('ul.collection li');
+    var currentUser = document.querySelector('available-bars').getAttribute('current-user');
+
+    var bars = document.querySelector('available-bars').getAttribute('bars');
+    bars = JSON.parse(bars);
+    var barsDictionary = {};
+    for (var bar of bars) {
+      barsDictionary[bar.id] = { visitors: bar.visitors };
+    }
+
+    for(var collection of collections) {
+      var id = collection.id;
+      if (barsDictionary[id]) {
+        var bar = barsDictionary[id];
+        var numVisitors = collection.querySelector('.secondary-content span.number-of-visitors');
+        numVisitors.innerText = bar.visitors.length;
+
+        if (currentUser) {
+          if (bar.visitors.includes(currentUser)) {
+            var icon = collection.querySelector('.secondary-content i.material-icons');
+            icon.innerText = 'star';
+          }
+        }
+      }
+    }

@@ -46,4 +46,7 @@ module.exports = function (app, passport) {
     .get(isLoggedIn, function (req, res) {
       res.render('profile');
     });
+
+  app.route('/:id')
+    .get(isLoggedIn, searchHandler.voteForBar);
 };

@@ -1,42 +1,98 @@
 'use strict';
 
 const yelp = require('yelp-fusion');
+const Bar = require('../models/bars');
 
 function SearchHandler() {
+  this.voteForBar = (req, res) => {
+    var barId = req.params.id;
+    if (!barId) { return }
+
+    return Bar
+      .findOne({id: barId})
+      .then(addOrUpdateBar)
+      .then(redirectToHomePage);
+
+    function addOrUpdateBar(dbData) {
+      if (dbData) {
+        updateExistingBar(dbData);
+      } else {
+        addNewBar();
+      }
+    }
+
+    function updateExistingBar(bar) {
+      if (bar.visitors.includes(req.user.twitter.id)) {
+        let visitors = bar.visitors.filter(
+          id => id !== req.user.twitter.id
+        );
+        bar.visitors = visitors;
+      } else {
+        bar.visitors.push(req.user.twitter.id);
+      }
+      return bar.save();
+    }
+
+    function addNewBar() {
+      let bar = new Bar({
+        id: barId,
+        visitors: [req.user.twitter.id]
+      });
+      return bar.save();
+    }
+
+    function redirectToHomePage() {
+      res.redirect('/');
+    }
+  };
+
   this.getNightLife = (req, res) => {
     const location = req.query.search ? req.query.search : '';
+    const userId = req.user ? req.user.twitter.id : null;
 
     return yelp
       .accessToken(
         process.env.YELP_CLIENT_ID,
         process.env.YELP_CLIENT_SECRET
       )
-      .then(response => {
-          const client = yelp.client(response.jsonBody.access_token);
+      .then(renderResponse)
+      .catch(e => { console.log(e); return e; });
 
-          client.search({
-            term:'bars',
-            location: location
-          }).then(response => {
-            return res.render('home',
-              {
-                data: JSON.stringify(response.jsonBody.businesses)
-              }
+      function renderResponse(response) {
+        const client = yelp.client(response.jsonBody.access_token);
+
+        return client
+          .search({term:'bars', location: location})
+          .then(returnData)
+          .catch(returnErrorMessage);
+
+        function returnData(response) {
+          const businesses = response.jsonBody.businesses;
+          return Bar
+            .find()
+            .then(renderBarsAndResponse);
+
+            function renderBarsAndResponse(bars) {
+              return res.render('home',
+                {
+                  data: JSON.stringify(businesses),
+                  bars: JSON.stringify(bars),
+                  userId: userId
+                }
             );
-          })
-          .catch(e => {
-            const errorMessage = 'We couldn\'t find anything in the location "' + location + '."';
-            return res.render('home',
-              {
-                error: location ? errorMessage : null,
-                data: JSON.stringify([]),
-              }
-            );
-          });
-        }).catch(e => {
-          console.log(e);
-          return e;
-        });
+          }
+        }
+
+        function returnErrorMessage() {
+          const errorMessage = 'We couldn\'t find anything in the location "' + location + '."';
+          return res.render('home',
+            {
+              error: location ? errorMessage : null,
+              data: JSON.stringify([]),
+            }
+          );
+        }
+      }
   }
 }
 
