@@ -34,13 +34,20 @@ module.exports = function (app, passport) {
     .get(passport.authenticate('twitter'));
 
   app.route('/auth/twitter/callback')
-    .get(passport.authenticate('twitter', {
-      successRedirect: '/',
-      failureRedirect: '/login'
-    }));
+    .get(
+      passport.authenticate('twitter'),
+      function (req, res) {
+        return res.redirect('/?search=' + searchHandler.searchTerm);
+      }
+    );
 
   app.route('/')
-    .get(searchHandler.getNightLife);
+    .get(
+      function(req, res) {
+        searchHandler.searchTerm = req.query.search ? req.query.search : '';
+        return searchHandler.getNightLife(req, res);
+      }
+    );
 
   app.route('/profile')
     .get(isLoggedIn, function (req, res) {
