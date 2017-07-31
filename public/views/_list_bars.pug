@@ -6,6 +6,6 @@ ul.collection
       br
       span.ratings stars: #{business.rating}
       span.price price: #{business.price}
-    a.secondary-content(href=business.id)
+    a.secondary-content(href=business.id + '/?search=' + searchTerm)
       i.material-icons star_border
       span.number-of-visitors

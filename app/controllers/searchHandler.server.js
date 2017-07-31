@@ -5,7 +5,8 @@ const Bar = require('../models/bars');
 
 function SearchHandler() {
   this.voteForBar = (req, res) => {
-    var barId = req.params.id;
+    const searchTerm = req.query.search;
+    const barId = req.params.id;
     if (!barId) { return }
 
     return Bar
@@ -42,13 +43,14 @@ function SearchHandler() {
     }
 
     function redirectToHomePage() {
-      res.redirect('/');
+      res.redirect('/?search=' + searchTerm);
     }
   };
 
   this.getNightLife = (req, res) => {
     const location = req.query.search ? req.query.search : '';
     const userId = req.user ? req.user.twitter.id : null;
+    const searchTerm = req.query.search;
 
     return yelp
       .accessToken(
@@ -77,7 +79,8 @@ function SearchHandler() {
                 {
                   data: JSON.stringify(businesses),
                   bars: JSON.stringify(bars),
-                  userId: userId
+                  userId: userId,
+                  searchTerm: searchTerm
                 }
             );
           }
@@ -85,10 +88,12 @@ function SearchHandler() {
 
         function returnErrorMessage() {
           const errorMessage = 'We couldn\'t find anything in the location "' + location + '."';
-          return res.render('home',
+          return res.render(
+            'home',
             {
               error: location ? errorMessage : null,
               data: JSON.stringify([]),
+              searchTerm: searchTerm
             }
           );
         }
